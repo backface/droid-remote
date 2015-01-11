@@ -7,7 +7,7 @@ Even if you do not have any use for  our phone with broken display or touchscree
 
 Remote controls such as VNC normally require root and do not work very well on all phones. There is a much bolder solution:
 grab screenhost from the phone and send remote events via Android's debug bridge (adb). This code is inspired by 
-Marian Schednig's [http://marian.schedenig.name/2014/07/03/remote-control-your-android-phone-through-adb/](adbcontrol), 
+Marian Schednig's [adbcontrol](http://marian.schedenig.name/2014/07/03/remote-control-your-android-phone-through-adb/), 
 but it's written python and also handles orientation changes.
 
 It's horribly slow - but it works.
