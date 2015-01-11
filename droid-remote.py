@@ -25,7 +25,7 @@ import pyglet
 import subprocess
 from pyglet.window import key
 
-adb_path = "/usr/local/bin"
+adb_path = ""
 tmp_img = "screen.png"
 width = 360
 height = 640
@@ -178,11 +178,11 @@ class DroidRemote(pyglet.window.Window):
 					x = self.andheight - x
 					y = self.andwidth - y 			
 			if x == self.mx and y == self.my:
-				cmd = "%s/adb shell input touchscreen tap %d %d" % (adb_path, x, y)
+				cmd = "%sadb shell input touchscreen tap %d %d" % (adb_path, x, y)
 				subprocess.call(cmd, shell=True)
 				print "clicked on: ", x, y, button
 			else:
-				cmd = "%s/adb shell input touchscreen swipe %d %d %d %d" % (adb_path, self.mx, self.my, x, y)
+				cmd = "%sadb shell input touchscreen swipe %d %d %d %d" % (adb_path, self.mx, self.my, x, y)
 				subprocess.call(cmd, shell=True)				
 				print "swipe from", self.mx, self.my, " to: ", x, y
 
@@ -190,7 +190,7 @@ class DroidRemote(pyglet.window.Window):
 		pass
 		 
 	def on_key_press(self, symbol, modifiers):
-		cmd = "%s/adb shell input keyevent %s" % (adb_path, key_codes[symbol])
+		cmd = "%sadb shell input keyevent %s" % (adb_path, key_codes[symbol])
 		print cmd
 		subprocess.call(cmd, shell=True)	
 		if key_codes.has_key(symbol):
@@ -213,7 +213,7 @@ class DroidRemote(pyglet.window.Window):
 			self.image.blit(0, 0)
 	
 	def update_image(self,df):
-		cmd = adb_path + "/adb shell screencap -p"
+		cmd = adb_path + "adb shell screencap -p"
 		adb_img_data = subprocess.check_output(cmd, shell=True)
 		f = open(tmp_img, 'w')
 		f.write(adb_img_data.replace("\r\n","\n"))
@@ -227,7 +227,7 @@ class DroidRemote(pyglet.window.Window):
 		self.image.height=height
 		self.clear_cache(tmp_img)
 		
-		cmd = adb_path + "/adb shell dumpsys input | grep 'SurfaceOrientation' | awk '{ print $2 }'"
+		cmd = adb_path + "adb shell dumpsys input | grep 'SurfaceOrientation' | awk '{ print $2 }'"
 		adb_orientation = subprocess.check_output(cmd, shell=True)
 		self.orientation = int(adb_orientation)
 		if self.orientation > 0:
@@ -238,9 +238,13 @@ class DroidRemote(pyglet.window.Window):
 			del pyglet.resource._default_loader._cached_images[filename]
 		
 if __name__ == "__main__":
-	if not os.path.exists("%s/adb" % adb_path):
-		print "Could not run adb"
-		exit(1)
+	cmd = adb_path + "adb devices"
+	try:
+		subprocess.check_output(cmd, shell=True)
+	except subprocess.CalledProcessError:
+		print "Error trying to run adb - Is it in your path?"
+		exit(1)		
+
 	window = DroidRemote()
 	pyglet.clock.schedule(window.update_image)
 	pyglet.app.run()
