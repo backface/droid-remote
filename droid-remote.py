@@ -28,6 +28,7 @@ from pyglet.window import key
 
 adb_path = ""
 tmp_img_path = "/tmp"
+tmp_img = "screen.png"
 width = 360
 height = 640
 
@@ -226,7 +227,8 @@ class DroidRemote(pyglet.window.Window):
 		self.clear_cache(tmp_img)		
 		cmd = adb_path + "adb shell dumpsys input | grep 'SurfaceOrientation' | awk '{ print $2 }'"
 		adb_orientation = subprocess.check_output(cmd, shell=True)
-		self.orientation = int(adb_orientation)
+		adb_orientation.split("\n");
+		self.orientation = int(adb_orientation[0])
 
 	def clear_cache(self, filename):
 		if filename in pyglet.resource._default_loader._cached_images:
