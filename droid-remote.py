@@ -162,9 +162,10 @@ class DroidRemote(pyglet.window.Window):
 				tmp = x
 				x = y
 				y = tmp	
+				y = self.andwidth - y 
 				if self.orientation == 3:
 					x = self.andheight - x
-					y = self.andwidth - y 
+					y = self.andwidth - y
 			self.mx = x
 			self.my = y
 			
@@ -176,14 +177,17 @@ class DroidRemote(pyglet.window.Window):
 				tmp = x
 				x = y
 				y = tmp	
+				y = self.andwidth - y 
 				if self.orientation == 3:
 					x = self.andheight - x
-					y = self.andwidth - y 			
+					y = self.andwidth - y 
 			if x == self.mx and y == self.my:
 				cmd = "%sadb shell input touchscreen tap %d %d" % (adb_path, x, y)
+				print "tap %d %d" % ( x, y)
 				subprocess.call(cmd, shell=True)
 			else:
 				cmd = "%sadb shell input touchscreen swipe %d %d %d %d" % (adb_path, self.mx, self.my, x, y)
+				print "swipe %d %d %d %d" % (self.mx, self.my, x, y)				
 				subprocess.call(cmd, shell=True)				
 
 	def on_mouse_drag(self,x, y, dx, dy, button, modifiers):
@@ -229,6 +233,7 @@ class DroidRemote(pyglet.window.Window):
 		adb_orientation = subprocess.check_output(cmd, shell=True)
 		adb_orientation.split("\n");
 		self.orientation = int(adb_orientation[0])
+		
 
 	def clear_cache(self, filename):
 		if filename in pyglet.resource._default_loader._cached_images:
